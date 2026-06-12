@@ -1,0 +1,9 @@
+Dobi podatke iz Yahoo finance?
+Fast Fourier transform (FFT)
+
+pip install yfinance
+A nej installiram yfinance v local environment al na sploh/kako se ustvari local oz. virtual environment?
+
+cnn business
+
+python -m pip install pandas

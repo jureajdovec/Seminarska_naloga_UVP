@@ -1,0 +1,22 @@
+import re
+import requests
+
+url = "https://finance.yahoo.com/research-hub/screener/equity/"
+HEADERS = {"User-Agent": "Mozilla/5.0"}
+
+imena_tickerjev = []
+
+for i in range(5):
+    odgovor = requests.get(f"https://finance.yahoo.com/research-hub/screener/equity/?start={i}&count=100",timeout = 2,headers=HEADERS)
+    vsebina = odgovor.text
+
+    'v seznam imena_tickerjev doda vse tickerje, ki ustrezajo regularnem izrazu (validni simboli za delnice so le velike tiskane črke in pa +-. =/)'
+
+    for najdba in re.findall(
+    r'<span class="symbol yf-hzimq4">(?P<ticker>[A-Z+-. =/]*?) </span>',
+    vsebina,
+    flags=re.DOTALL,
+    ):
+        imena_tickerjev.append(f'{najdba}')
+
+print(imena_tickerjev)
