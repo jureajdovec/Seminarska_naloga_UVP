@@ -1,5 +1,6 @@
 import re
 import requests
+import json
 
 url = "https://finance.yahoo.com/research-hub/screener/equity/"
 HEADERS = {"User-Agent": "Mozilla/5.0"}
@@ -10,7 +11,7 @@ for i in range(5):
     odgovor = requests.get(f"https://finance.yahoo.com/research-hub/screener/equity/?start={i}&count=100",timeout = 2,headers=HEADERS)
     vsebina = odgovor.text
 
-    'v seznam imena_tickerjev doda vse tickerje, ki ustrezajo regularnem izrazu (validni simboli za delnice so le velike tiskane črke in pa +-. =/)'
+    'v seznam imena_tickerjev doda vse tickerje, ki ustrezajo regularnem izrazu (validni simboli za delnice so le velike tiskane črke in pa znaki +-. =/)'
 
     for najdba in re.findall(
     r'<span class="symbol yf-hzimq4">(?P<ticker>[A-Z+-. =/]*?) </span>',
@@ -19,4 +20,6 @@ for i in range(5):
     ):
         imena_tickerjev.append(f'{najdba}')
 
-print(imena_tickerjev)
+
+with open('json_tickerjev', 'w', encoding='utf-8') as dat:
+    json.dump(imena_tickerjev, dat)
