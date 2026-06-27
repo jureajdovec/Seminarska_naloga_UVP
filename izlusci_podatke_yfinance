@@ -1,0 +1,73 @@
+import requests
+import re
+import json
+import time
+
+# ti headersi so bili skopirani iz interneta - yfinance je zelo strog, zato kratki headersi niso delovali
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Referer": "https://www.google.com/",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1"
+}
+
+# na internetu nekateri za daljše requeste priporočajo ustvarjanje seesiona
+session = requests.Session()
+
+with open('json_tickerjev', 'r', encoding='utf-8') as dat:
+    seznam_tickerjev = json.load(dat)
+
+slovar_ticker_plus_cena_ob_zaprtju = {}
+
+vzorec = r'<tr class="yf-u4m6f0"><td class="yf-u4m6f0">(.*?)</td><td class="yf-u4m6f0">(.*?)</td><td class="yf-u4m6f0">(.*?)</td><td class="yf-u4m6f0">(.*?)</td><td class="yf-u4m6f0">(.*?)</td><td class="yf-u4m6f0">(.*?)</td><td class="yf-u4m6f0">(.*?)</td>\s*</tr>'
+
+# primer_vrstice: <tr class="yf-u4m6f0"><td class="yf-u4m6f0">Jun 25, 2026</td><td class="yf-u4m6f0">200.08</td><td class="yf-u4m6f0">200.80</td><td class="yf-u4m6f0">192.13</td><td class="yf-u4m6f0">195.74</td><td class="yf-u4m6f0">195.74</td><td class="yf-u4m6f0">150,205,600</td>  </tr>
+
+for ticker in seznam_tickerjev:
+
+    seznam_cen = []
+
+    odgovor = session.get(f"https://finance.yahoo.com/quote/{ticker}/history",timeout = 5,headers=HEADERS)
+
+    if odgovor.status_code == 200:
+        vsebina = odgovor.text
+
+        for najdba in re.findall(vzorec, 
+        vsebina,
+        flags=re.DOTALL,
+        ): 
+            seznam_cen.append(f'{najdba[5]}')
+        slovar_ticker_plus_cena_ob_zaprtju[ticker] = seznam_cen
+    else:
+        print('nekaj je šlo narobe')
+        break
+
+    time.sleep(2)
+
+
+
+
+
+#url = "https://finance.yahoo.com/quote/NVDA/history"
+#print(f"Requesting Yahoo Finance data for NVDA...")
+#
+#try:
+#    odgovor = session.get(url, headers=HEADERS, timeout=10)
+#    print(f"Status Code: {odgovor.status_code}")
+#    
+#    if odgovor.status_code == 200:
+#        vsebina = odgovor.text
+#        print("Success! Bypassed the firewall. Total characters downloaded:", len(vsebina))
+#        
+#        # [Your regex logic will go here]
+#        
+#    else:
+#        print("Yahoo still rejected the request. Code:", odgovor.status_code)
+#
+#except Exception as e:
+#    print("An error occurred during the request:", e)
+    
