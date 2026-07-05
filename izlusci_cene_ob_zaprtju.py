@@ -37,7 +37,7 @@ vzorec = r"<tr[^>]*>\s*<td[^>]*>([^<]*)</td>\s*<td[^>]*>([^<]*)</td>\s*<td[^>]*>
 validni_datumi = []
 
 # python tukaj pošiljam na kanadsko stran yahoo finance, saj ta nima piškotkov in ne zablokira
-# datume, ko je bila borza odprta poberem iz strani za Nvidia
+# datume, ko je bila borza odprta poberem iz strani za delnico Nvidia
 odgovor = session.get(
     f"https://ca.finance.yahoo.com/quote/NVDA/history", timeout=10, headers=HEADERS
 )
