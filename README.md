@@ -5,7 +5,7 @@ Podatke sem pridobil iz strani Yahoo finance:
 
 1. Najprej sem pridobil tickerje 500 največjih delnic na trgu
 
-2. Iz strani za vsako delnico sem izluščil adjusted close price delnice za vsak dan v obdobju od 1. julija 2025 do 1.julija 2026
+2. Iz strani za vsako delnico sem izluščil adjusted close price delnice za vsak dan v obdobju od 1. julija 2025 do 1. julija 2026
 
 3. Za vsako delnico sem izluščil tudi market cap, P/E razmerje in beta marker
 
