@@ -1,4 +1,4 @@
-# Seminarska_naloga_UVP - Analiza delnic 
+# Analiza delnic 
 V tej nalogi sem analiziral 500 največjih delnic na borzi in indeks S&P 500 <br>
 <br>
 
