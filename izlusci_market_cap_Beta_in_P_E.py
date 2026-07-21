@@ -4,6 +4,7 @@ import json
 import time
 import csv
 
+
 def izlusci_mcap_beta_pe():
 
     HEADERS = {
@@ -42,7 +43,9 @@ def izlusci_mcap_beta_pe():
 
         for ticker in seznam_tickerjev:
             odgovor = session.get(
-                f"https://ca.finance.yahoo.com/quote/{ticker}", timeout=10, headers=HEADERS
+                f"https://ca.finance.yahoo.com/quote/{ticker}",
+                timeout=10,
+                headers=HEADERS,
             )
 
             if odgovor.status_code == 200:
@@ -52,7 +55,10 @@ def izlusci_mcap_beta_pe():
                 beta_najden = re.search(vzorec_beta, vsebina, re.DOTALL)
                 pe_najden = re.search(vzorec_pe, vsebina, re.DOTALL)
 
-                if market_cap_najden == None or market_cap_najden.group(1).strip() == "--":
+                if (
+                    market_cap_najden == None
+                    or market_cap_najden.group(1).strip() == "--"
+                ):
                     market_cap = "N/A"
                 else:
                     market_cap = market_cap_najden.group(1).strip()

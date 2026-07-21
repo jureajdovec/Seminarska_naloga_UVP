@@ -1,4 +1,5 @@
-# Analiza delnic 
+# Analiza delnic
+
 V tej nalogi sem analiziral 500 največjih delnic na borzi in indeks S&P 500. <br>
 <br>
 
@@ -11,7 +12,7 @@ V tej nalogi sem analiziral 500 največjih delnic na borzi in indeks S&P 500. <b
 3. Za vsako delnico sem izluščil tudi market cap, P/E razmerje in beta marker.
 
 4. Izluščil sem tudi adjusted close price za indeks S&P 500 za vsak dan v obdobju od 1. julija 2025 do 1. julija 2026.
-<br>
+   <br>
 
 ### Podatke sem analiziral in naredil naslednje:
 

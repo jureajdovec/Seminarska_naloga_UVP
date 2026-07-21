@@ -2,6 +2,7 @@ import re
 import requests
 import json
 
+
 def pridobi_tickerje():
     HEADERS = {"User-Agent": "Mozilla/5.0"}
 
@@ -24,7 +25,6 @@ def pridobi_tickerje():
         ):
             if najdba not in imena_tickerjev:
                 imena_tickerjev.append(f"{najdba}")
-    print(len(imena_tickerjev))
 
     with open("json_tickerjev", "w", encoding="utf-8") as dat:
         json.dump(imena_tickerjev, dat)

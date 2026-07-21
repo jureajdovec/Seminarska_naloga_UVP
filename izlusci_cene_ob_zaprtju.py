@@ -4,6 +4,7 @@ import json
 import time
 import csv
 
+
 def izlusci_cene_zaprtje():
 
     # Ti headersi so bili skopirani iz interneta - yfinance je zelo strog, zato kratki headersi niso zadostovali
@@ -38,7 +39,7 @@ def izlusci_cene_zaprtje():
 
     validni_datumi = []
 
-    # Python tukaj pošiljam na kanadsko stran yahoo finance, saj ta nima piškotkov in ne zablokira
+    # Python tukaj pošiljam na kanadsko stran yahoo finance, saj ta nima piškotkov in zato ne zablokira
     # Datume, ko je bila borza odprta poberem iz strani za delnico Nvidia
     odgovor = session.get(
         f"https://ca.finance.yahoo.com/quote/NVDA/history", timeout=10, headers=HEADERS

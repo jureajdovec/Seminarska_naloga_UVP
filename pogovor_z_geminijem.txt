@@ -1,0 +1,375 @@
+Preklapljanje naslova in piškotki
+
+User prompt: ali preklapljanje na kanadski naslov spletne strani odstrani ''cookiese''?
+Response: Kratki odgovor: Ne.
+Preklapljanje na kanadski naslov (ali katero koli drugo regijo) ne izbriše obstoječih piškotkov iz vašega brskalnika. Lahko pa vpliva na to, kateri piškotki se v tistem trenutku uporabljajo.
+Kaj se dejansko zgodi?
+Vse je odvisno od tega, kako natančno se spremeni spletni naslov (URL):
+Sprememba celotne domene (npr. iz stran.com na stran.ca): Brskalniki zaradi varnostnih pravil (t.i. Same-Origin Policy) ne dovolijo, da bi ena domena brala piškotke druge. Ko obiščete .ca različico, ta ne more videti piškotkov od .com različice. Vendar pazi: piškotki od .com še vedno ostanejo shranjeni v brskalniku. Ko se boste vrnili na .com, vas bodo tam še vedno "prepoznali". Kanadska stran bo medtem preprosto ustvarila svoj, nov komplet piškotkov.
+Sprememba le lokalnega dela naslova (npr. iz stran.com na [stran.com/ca](https://stran.com/ca)): Ker je glavna domena (stran.com) ostala popolnoma ista, brskalnik obdrži in uporablja vse obstoječe piškotke. Preklop na kanadsko podstran v tem primeru ne spremeni popolnoma ničesar.
+Kako dejansko očistiti piškotke?
+Če se želite piškotkov znebiti, ker želite ponastaviti stran, skriti svojo lokacijo ali pa vam spletno mesto javlja napako, preklapljanje med regijami ne bo pomagalo. Uporabite raje naslednje metode:
+Uporabite način brez beleženja zgodovine (Incognito): Najhitrejša pot, če želite začeti z "svežim" profilom brez predhodne zgodovine.
+Klik na ikono ključavnice: V vrstici za vnos spletnega naslova (URL) kliknite na ikono ključavnice (ali ikono nastavitev) na levi strani. Izberite Piškotki in podatki o spletnem mestu (Cookies and site data) ter jih izbrišite samo za to specifično stran.
+Bližnjica za brisanje: Pritisnite kombinacijo tipk Ctrl + Shift + Delete (Windows) ali Cmd + Shift + Delete (Mac), da odprete meni za brisanje podatkov brskanja.
+
+User prompt: kako napišem try/except block, če želim preveriti, ali python, ki ga pošiljam na spletno stran dejansko dobi html kodo?
+Response: Za varno pridobivanje HTML kode s spletne strani v Pythonu je najbolje uporabiti knjižnico requests. Da bo koda res robustna, moramo preveriti dve stvari:
+Ali je bila omrežna zahteva uspešna (da stran sploh obstaja in ni javila napake 404 ali 500).
+Ali je vrnjena vsebina dejansko HTML (in ne npr. slika, PDF ali JSON datoteka).
+Spodaj je primer šolskega try/except bloka, ki pokrije vse te scenarije.
+Koda: Robusten try/except blok
+import requests
+
+url = "https://example.com"
+
+try:
+    # 1. Pošljemo zahtevo (nastavimo timeout, da program ne obvisi, če stran neodzivna)
+    response = requests.get(url, timeout=10)
+    
+    # 2. Preverimo HTTP status (sproži napako, če je status 4xx ali 5xx)
+    response.raise_for_status()
+    
+    # 3. Preverimo, ali je glava (Header) odziva res "text/html"
+    content_type = response.headers.get('Content-Type', '')
+    if 'text/html' not in content_type:
+        # Če ni HTML, sami sprožimo ValueError, ki ga ujame spodnji except
+        raise ValueError(f"Nismo dobili HTML kode, ampak: {content_type}")
+        
+    # Če pridemo do sem, je vse v redu
+    html_koda = response.text
+    print("HTML koda je uspešno prejeta!")
+    print(html_koda[:200]) # Izpis prvih 200 znakov za test
+
+except requests.exceptions.HTTPError as errh:
+    print(f"HTTP Napaka (npr. 404 ali 500): {errh}")
+
+except requests.exceptions.ConnectionError as errc:
+    print(f"Napaka pri povezavi (napačen URL ali ni interneta): {errc}")
+
+except requests.exceptions.Timeout as errt:
+    print(f"Časovna omejitev je potekla (strežnik se ne odziva): {errt}")
+
+except requests.exceptions.RequestException as err:
+    print(f"Splošna napaka pri zahtevi: {err}")
+
+except ValueError as err_vsebina:
+    print(f"Napaka v tipu podatkov: {err_vsebina}")
+
+
+Kako to deluje?
+response.raise_for_status(): To je ključna funkcija. Če spletna stran vrne kodo 200 OK, se ne zgodi nič. Če pa vrne npr. 404 Not Found ali 500 Internal Server Error, bo ta vrstica namerno sprožila izjemo (HTTPError), ki jo nato ujame ustrezen except.
+Preverjanje Content-Type: Spletni strežniki v glavi odgovora vedno povedo, kaj pošiljajo. Z ukazom 'text/html' not in content_type poskrbimo, da nas program pravočasno opozori, če smo namesto spletne strani ponesreči prenesli sliko ali JSON datoteko.
+timeout=10: Vedno določite časovno omejitev (v sekundah). Če se strežnik "zacikla", bo vaš program po 10 sekundah vrgel napako Timeout in se ne bo zagozdil za vedno.
+
+User prompt: katero knjižnico naj uporabim, če želim delati FFT na podatkih delnic. Ali je scipy.fft ustrezna in kako jo naložim?
+Response: Da, scipy.fft je odlična in povsem ustrezna izbira!
+Zlati standard za izvajanje hitre Fourierove transformacije (FFT) v Pythonu sta dve knjižnici: SciPy (scipy.fft) in NumPy (numpy.fft).
+Za analizo delnic je SciPy celo malenkost boljša izbira, saj je njen algoritem v določenih situacijah hitrejši in ponuja več naprednih funkcij za obdelavo signalov (npr. enostavno odstranjevanje trendov, kar je pri delnicah ključno).
+Kako jo naložite?
+SciPy najlažje namestite preko upravljalnika paketov pip. Ker boste delali s podatki o delnicah, vam toplo priporočam, da hkrati namestite še pandas (za delo s časovnimi vrstami) in yfinance (za enostaven uvoz realnih podatkov o delnicah).
+Odprite svoj terminal ali ukazno vrstico (Command Prompt) in zaženite:
+pip install scipy numpy pandas yfinance
+
+
+Hitri primer: Kako jo uporabiti na delnicah
+Podatki o delnicah imajo linearen trend (rastejo ali padajo skozi čas), kar lahko popači rezultate FFT. Zato je pred izvedbo FFT priporočljivo podatke detrendati (odstraniti trend) ali pa uporabiti dnevne donose.
+Tukaj je preprost primer, kako preveriti cikle v ceni delnice:
+import numpy as np
+import pandas as pd
+import yfinance as yf
+from scipy.fft import fft, fftfreq
+from scipy.signal import detrend
+
+# 1. Prenos podatkov (npr. Apple za zadnji dve leti)
+data = yf.download("AAPL", start="2024-01-01", end="2026-01-01")
+cene = data['Close'].values.flatten()
+
+# 2. Odstranitev trenda (nujno za delnice!)
+cene_brez_trenda = detrend(cene)
+
+# 3. Izračun FFT
+N = len(cene_brez_trenda)
+fft_vrednosti = fft(cene_brez_trenda)
+frekvence = fftfreq(N, d=1) # d=1 pomeni 1 dan
+
+# Ker je FFT simetričen, vzamemo le pozitivno polovico spektra
+pozitivni_del = N // 2
+amplitude = np.abs(fft_vrednosti[:pozitivni_del])
+dejanske_frekvence = frekvence[:pozitivni_del]
+
+print("FFT je uspešno izračunan!")
+
+
+Na kaj morate biti pozorni?
+Borzni podatki imajo eno posebnost: vikendi in prazniki manjkajo. To pomeni, da vaša časovna vrsta nima popolnoma enakomernih časovnih razmikov (med četrtkom in petkom je 1 dan, med petkom in ponedeljkom pa 3 dnevi). Za osnovno analizo večina matematikov to preprosto ignorira in predpostavi, da je "1 korak = 1 trgovalni dan", kar v praksi deluje povsem solidno.
+Kaj natančno je tvoj cilj pri analizi delnic z FFT – želiš odkriti skrite cikle (npr. sezonska nihanja), zgladiti šum ali podatke pripraviti kot značilnosti (features) za strojno učenje?
+
+User prompt: napisal sem sledečo kodo za FFT: CENE_SP_500 = pd.read_csv('SP_500_cene.csv') CENE_SP_500_STOLPCI = CENE_SP_500.T.reset_index() CENE_SP_500_STOLPCI.columns = ['Datum', 'Cena'] CENE_SP_500_STOLPCI = CENE_SP_500_STOLPCI.drop(0).reset_index(drop=True) CENE_SP_500_STOLPCI['Cena'] = CENE_SP_500_STOLPCI['Cena'].str.replace(',', '') CENE_SP_500_STOLPCI['Datum'] = pd.to_datetime(CENE_SP_500_STOLPCI['Datum']) CENE_SP_500_STOLPCI['Cena'] = CENE_SP_500_STOLPCI['Cena'].astype(float) CENE_SP_500_STOLPCI['Donos'] = CENE_SP_500_STOLPCI['Cena'].pct_change() stevilo_trgovalnih_dni = len(CENE_SP_500_STOLPCI) signal = CENE_SP_500_STOLPCI['Donos'].values print(type(signal)) fft_vrednosti = fft(signal) frekvence = fftfreq(stevilo_trgovalnih_dni, d=1) # Jemljemo le pozitivne frekvence, saj je FFT vedmo simetričen pozitivni_indeksi = frekvence > 0 f_prave = frekvence[pozitivni_indeksi] #izračunamo moč posamezne frekvence amplitude = np.abs(fft_vrednosti[pozitivni_indeksi]) #frekvence pretvorimo v periode: perioda = 1 / frekvenca periode = 1 / f_prave Ali mi pomagaš prikazati na ustrezen način s pomočjo matplotlib?
+Response: Koda, ki si jo napisal, je odlična osnova! Izračun period (1 / f_prave) je točno to, kar iščeš, saj je za analitike veliko bolj intuitivno razmišljati v dneh kot pa v tehničnih frekvencah.
+Preden pa skočiva na risanje grafov, morava popraviti eno skrito past v tvoji kodi:
+Funkcija .pct_change() za prvi vrstici vrne vrednost NaN (ker prejšnji dan ne obstaja). Če pošlješ vrednost NaN v funkcijo fft(), bo celoten rezultat postal NaN. Zato morava nujno dodati .dropna().
+Spodaj je celotna koda za vizualizacijo z matplotlib. Pripravil sem graf, ki prikazuje Amplitudo v odvisnosti od Periode (v dneh), pri čemer je uporabljen logaritemski prikaz x-osi, saj se periode raztezajo od 2 dni pa vse do več tisoč dni.
+Koda za vizualizacijo z matplotlib
+Tukaj je dopolnjen del tvoje kode, ki poskrbi za čiščenje NaN in izris grafa:
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.fft import fft, fftfreq
+
+# --- 1. POPRAVEK: Čiščenje NaN vrednosti, ki jih ustvari pct_change() ---
+donosi_cisti = CENE_SP_500_STOLPCI['Donos'].dropna().values
+stevilo_trgovalnih_dni = len(donosi_cisti)
+
+# --- 2. Ponovni izračun FFT brez NaN vrednosti ---
+fft_vrednosti = fft(donosi_cisti)
+frekvence = fftfreq(stevilo_trgovalnih_dni, d=1)
+
+# Jemljemo le pozitivne frekvence
+pozitivni_indeksi = frekvence > 0
+f_prave = frekvence[pozitivni_indeksi]
+amplitude = np.abs(fft_vrednosti[pozitivni_indeksi])
+periode = 1 / f_prave
+
+# --- 3. VIZUALIZACIJA Z MATPLOTLIB ---
+plt.figure(figsize=(14, 6))
+
+# Narišemo spekter (Perioda vs Amplituda)
+plt.plot(periode, amplitude, color='#1f77b4', linewidth=1.5, label='FFT Amplituda')
+
+# Ker so periode lahko zelo dolge (npr. 1000 dni) ali kratke (2 dni), 
+# uporaba logaritemske osi X drastično izboljša preglednost.
+plt.xscale('log')
+
+# Dodajanje oznak za lažje branje (tipični borzni cikli)
+# 5 dni = 1 teden, 21 dni = 1 mesec, 63 dni = 1 kvartal, 252 dni = 1 trgovalno leto
+tipicni_cikli = [2, 5, 21, 63, 126, 252, 504]
+oznake_ciklov = ['2d', '1t (5d)', '1m (21d)', '3m (63d)', '6m (126d)', '1l (252d)', '2l (504d)']
+
+plt.xticks(tipicni_cikli, oznake_ciklov, rotation=45)
+
+# Urejanje izgleda grafa
+plt.title('FFT Analiza S&P 500: Iskanje dominantnih ciklov v donosih', fontsize=14, fontweight='bold', pad=15)
+plt.xlabel('Perioda (Trgovalni dnevi - Logaritemsko merilo)', fontsize=12)
+plt.ylabel('Moč signala (Amplituda)', fontsize=12)
+
+# Vklop mreže za lažje odčitavanje
+plt.grid(True, which="both", linestyle="--", alpha=0.5)
+
+# Izpostavimo najmočnejše vršne vrednosti (top 3 vrhovi)
+# (Omejimo iskanje vrhov na periode, daljše od 5 dni, da izločimo dnevni šum)
+indeksi_nad_5d = periode > 5
+if np.any(indeksi_nad_5d):
+    najvisji_vrhovi = np.argsort(amplitude[indeksi_nad_5d])[-3:]
+    for idx in najvisji_vrhovi:
+        p_vrh = periode[indeksi_nad_5d][idx]
+        a_vrh = amplitude[indeksi_nad_5d][idx]
+        plt.scatter(p_vrh, a_vrh, color='red', s=40, zorder=5)
+        plt.annotate(f"{p_vrh:.1f} dni", (p_vrh, a_vrh), textcoords="offset points", 
+                     xytext=(0,10), ha='center', fontweight='bold', color='red')
+
+plt.tight_layout()
+plt.show()
+
+
+Kako brati ta graf?
+Vrhovi (Peaks): Vsak opazen "vrh" na grafu predstavlja cikel, ki se v podatkih S&P 500 pogosto ponavlja. Če vidiš močan vrh na vrednosti npr. 21.0 dni, to pomeni, da v donosih obstaja statistično opazen mesečni cikel.
+Logaritemska os X: Omogoča ti, da na enem grafu jasno vidiš tako kratkoročne nihaje (npr. tedenske cikle pri 5 dneh) kot dolgoročne makro cikle (večletne trende na desni strani grafa).
+Rdeče pike (Avtomatski markerji): Koda na koncu avtomatsko poišče tri najmočnejše vrhove (pri ciklih daljših od 5 dni) in jih označi z rdečo barvo ter izpiše natančno število dni.
+
+User prompt: napisal sem sledečo kodo za Fourierovo extrapolacijo. Ali mi pomagaš izrisati lep graf, ki to predstavi? # najprej izluščimo že dobljene podatke: predvidevane_cene = CENE_SP_500_STOLPCI.sort_values('Datum').reset_index(drop=True) y = predvidevane_cene['Cena'].values stevilo_dni = len(y) x = np.arange(stevilo_dni) # poiščemo dolgotranji trend in ga odstranimo # polyfit poišče najbolj 'ustrezen' polinom željene stopnje, ki se prilega podatkom-tukaj bo to premica koeficienti_trenda = np.polyfit(x,y,1) trend = np.polyval(koeficienti_trenda, x) y_brez_trenda = y - trend # na dobljenem y-u izvedemo FFT in poiščemo frekvence y_fft = np.fft.fft(y_brez_trenda) frekvence = np.fft.fftfreq(stevilo_dni) # izberemo si koliko frekvenc želimo vzeti - to lahko spreminjamo po želji stevilo_izbranih_frekvenc = 50 indeksi = np.argsort(np.abs(y_fft))[::-1] # izberemo koliko dni v prihodnost želimo podaljšati graf dnevi_v_prihodnost = 200 x_prihodnost = np.arange(stevilo_dni + dnevi_v_prihodnost) # izvedba ekstrapolacije: # najprej moramo ustvariti prazen signal za preteklost + prihodnost rekonstrukcija = np.zeros(len(x_prihodnost)) for index in indeksi[:stevilo_izbranih_frekvenc]:     amplituda = np.abs(y_fft[index]) / stevilo_dni     faza = np.angle(y_fft[index])     f = frekvence[index]     if f == 0:         množitelj = 1     else:         množitelj = 2         rekonstrukcija += množitelj * amplituda * np.cos(2 * np.pi * f * x_prihodnost + faza) # sedaj prištejemo nazaj trend - to je trend od prej, le podaljšan v prihodnost trend_prihodnost = np.polyval(koeficienti_trenda, x_prihodnost) končna_napoved = rekonstrukcija + trend_prihodnost # pred izrisom grafa moramo še določiti prihodnje datume, na katere bo borza odprta # ta del kode za podaljšanje datumov sem pridobil iz interneta zadnji_datum = predvidevane_cene['Datum'].max() prihodnji_datumi = pd.bdate_range(start=zadnji_datum + pd.Timedelta(days=1), periods=dnevi_v_prihodnost) vsi_datumi = pd.concat([predvidevane_cene['Datum'], pd.Series(prihodnji_datumi)]).reset_index(drop=True)
+Response: Tvoja koda za Fourierovo ekstrapolacijo je odlično zastavljena! Lepo si rešil odstranjevanje trenda in ponovno dodajanje borznih datumov v prihodnosti.
+Za finančne napovedi je pri grafih ključno, da jasno ločimo zgodovinske podatke od prihodnosti (napovedi). To najlažje dosežemo z vertikalno ločilno črto in blagim senčenjem ozadja za prihodnje dni.
+Spodaj je koda z uporabo matplotlib, ki jo preprosto dodaš na konec svojega skripta.
+Koda za izris profesionalnega grafa
+import matplotlib.pyplot as plt
+
+# Nastavitev velikosti in stila grafa
+plt.figure(figsize=(15, 7), facecolor='#f8f9fa')
+ax = plt.subplot(111)
+ax.set_facecolor('#ffffff')
+
+# 1. Izris dejanskih zgodovinskih podatkov (temno modra/siva)
+plt.plot(vsi_datumi[:stevilo_dni], y, color='#2c3e50', label='Dejanska cena (Zgodovina)', linewidth=2)
+
+# 2. Izris Fourierove rekonstrukcije in napovedi (oranžna prekinjena črta)
+plt.plot(vsi_datumi, končna_napoved, color='#e67e22', label=f'Fourierova napoved ({stevilo_izbranih_frekvenc} frekvenc)', linewidth=1.8, linestyle='--')
+
+# 3. Izris dolgoročnega trenda (tanka pikčasta črta)
+plt.plot(vsi_datumi, trend_prihodnost, color='#95a5a6', label='Dolgoročni trend (Polinom 1. stopnje)', linewidth=1.2, linestyle=':')
+
+# --- VIZUALNI ELEMENTI ZA NAPOVED ---
+
+# Vertikalna črta, ki označuje "Danes" oz. začetek napovedi
+ločilni_datum = vsi_datumi[stevilo_dni - 1]
+plt.axvline(x=ločilni_datum, color='#d35400', linestyle='-', linewidth=1.5, alpha=0.8)
+
+# Blago rumeno/oranžno senčenje ozadja za prihodnjih 200 dni
+plt.axvspan(ločilni_datum, vsi_datumi.values[-1], color='#f1c40f', alpha=0.08, label='Območje napovedi (+200 dni)')
+
+# Dodajanje besedila neposredno ob ločilno črto
+Y_višina_teksta = y[-1] # Tekst postavimo približno na zadnjo znano ceno
+plt.text(ločilni_datum, Y_višina_teksta, '  Začetek napovedi →', color='#d35400', fontweight='bold', va='center')
+
+# --- OBLIKOVANJE IN PODROBNOSTI ---
+
+plt.title('Fourierova ekstrapolacija in napoved indeksa S&P 500', fontsize=16, fontweight='bold', pad=20, color='#2c3e50')
+plt.xlabel('Datum', fontsize=12, labelpad=10)
+plt.ylabel('Cena ($)', fontsize=12, labelpad=10)
+
+# Mreža v ozadju za lažje branje vrednosti
+plt.grid(True, linestyle='--', alpha=0.5, color='#cccccc')
+
+# Izboljšana legenda (brez robov, bela podlaga)
+plt.legend(loc='upper left', frameon=True, facecolor='white', edgecolor='none', fontsize=11)
+
+# Samodejna rotacija datumov na X osi za boljšo preglednost
+plt.xticks(rotation=25)
+plt.tight_layout()
+
+# Prikaz grafa
+plt.show()
+
+
+Kaj naredi ta graf pregleden?
+Vizualna ločitev: Svetlo rumeno osenčeno območje (axvspan) bralcu takoj pove, kje se končajo resnični podatki in kje matematika ugiba prihodnost.
+Čiste barve: Zgodovina uporablja umirjen, resen ton (#2c3e50), medtem ko ekstrapolacija izstopa v opozorilni oranžni barvi.
+Kontekst trenda: Izrisana pikčasta premica jasno kaže, ali Fourierovi cikli nihajo okoli realne rasti ali pa so "zbežali" stran od nje.
+(Graf bo avtomatsko prilagodil časovno os glede na tvoje datume v vsi_datumi.)
+
+User prompt: graf lahko malo poenostaviš, ni treba, da je tako prefinjeno narejen.
+Response: Razumem, greva na čisto osnove! Tukaj je preprosta, "gola" različica kode brez vseh lepotnih dodatkov, ki še vedno jasno pokaže vse, kdor moraš videti.
+Poenostavljena koda za graf
+import matplotlib.pyplot as plt
+
+# 1. Nastavitev velikosti grafa
+plt.figure(figsize=(12, 6))
+
+# 2. Izris dejanskih podatkov in napovedi
+plt.plot(vsi_datumi[:stevilo_dni], y, label='Zgodovina', color='blue')
+plt.plot(vsi_datumi, končna_napoved, label='Napoved', color='orange', linestyle='--')
+
+# 3. Vertikalna črta, ki loči preteklost od prihodnosti
+plt.axvline(x=vsi_datumi[stevilo_dni - 1], color='red', linestyle=':')
+
+# 4. Osnovne oznake in legenda
+plt.title('Fourierova ekstrapolacija S&P 500')
+plt.xlabel('Datum')
+plt.ylabel('Cena')
+plt.legend()
+plt.grid(True)
+
+# Prikaz
+plt.show()
+
+
+Kaj je zdaj drugače?
+Odstranjeni so vsi posebni barvni odtenki ozadja in senčenje območij (axvspan).
+Ni več avtomatskega dodajanja besedila v graf (plt.text).
+Linije so standardne (modra za zgodovino, oranžna prekinjena za napoved).
+Rdeča pikčasta črta še vedno jasno pokaže, kje se začne napoved, da se podatki ne pomešajo.
+
+User prompt: Imam pa eno vprašanje (ustvarjanje ''povprečne delnice''): koda, ki sem jo zadnjič napisal in je delala čudovito, je sedaj izrisala graf, ki se začne pri 1970 in gre do 2026 (podatki so zbrani le za 2025-2026). Zadnjič je ta koda delala dobro, danes pa ne. Ali je kakšen razlog? 
+Response: To z letom 1970 je absolutna klasika v programiranju! Ko se v Pythonu (ali kjerkoli v računalništvu) nenadoma od nikoder pojavi leto 1970, je to skoraj 100-% znak za isto težavo: nekje v podatkih se skriva ničla (0) ali prazna vrednost (NaN), ki jo je brskalnik ali Pandas ponesreči pretvoril v datum.
+januar 1970 je namreč začetek računalniškega časa (t.i. Unix Epoch). Za računalnik je številka 0 enaka datumu 1970-01-01.
+Ker praviš, da delaš na ustvarjanju "povprečne delnice" in da je koda zadnjič delovala, danes pa ne, se je najverjetneje spremenilo nekaj v samih vhodnih podatkih. Poglejva tri najpogostejše krivce, zakaj se je to zgodilo prav danes:
+Krivec 1: Uporaba .fillna(0) na napačnem mestu
+Ko združuješ več delnic skupaj, da bi izračunal njihovo povprečje, se pogosto zgodi, da kakšna delnica nima podatka za določen dan (npr. zaradi praznikov ali različnih borz). Pri združevanju tabel (npr. z pd.merge ali pd.concat) nastanejo prazna polja (NaN).
+Če si nekje v kodi napisal nekaj takega:
+# POZOR: To spremeni VSE prazne vrednosti v tabeli v 0, tudi datume!
+df = df.fillna(0) 
+
+
+Če je funkcija .fillna(0) ulovila stolpec z datumi, so vsi prazni datumi postali 0. Ko je koda nato izvedla pd.to_datetime(), so te ničle postale 1970-01-01.
+Krivec 2: Nova prazna vrstica v CSV datoteki (past s transponiranjem .T)
+Tvoja koda uporablja trik s transponiranjem: CENE_SP_500.T.reset_index(). Če je spletna stran, s katere prenašaš podatke, danes v CSV datoteko dodala eno prazno vrstico na koncu (kar se pogosto zgodi ob vikendih ali ob prehodu v nov teden), je ta prazna vrstica po transponiranju postala nov stolpec/vrstica brez imena. Pandas jo je prebral kot NaN ali 0 in jo pretvoril v leto 1970.
+Krivec 3: Napačna pretvorba indeksa
+Če si pri združevanju delnic ponesreči resetiral indeks in nato poskušal pretvoriti številke indeksa (0, 1, 2, 3...) v datume, bo prva vrstica (indeks 0) postala leto 1970, naslednja (indeks 1) pa sekundo ali dan kasneje.
+Kako takoj najdeš in odpraviš napako?
+Dodaj ti dve vrstici v kodo tik pred izris grafa, da ugotoviva, kaj se dogaja:
+# 1. Preveri, kateri je dejansko najstarejši datum v tvoji tabeli
+print("Najstarejši datum v tabeli je:", vsi_datumi.min())
+
+# 2. Poglej vrstice, ki imajo datum v letu 1970
+ulovljeni_krivci = CENE_SP_500_STOLPCI[CENE_SP_500_STOLPCI['Datum'].dt.year == 1970]
+print(ulovljeni_krivci)
+
+
+Hitra rešitev (Flaster na rano)
+Če se ti muditi in želiš graf takoj popraviti, lahko preprosto filtriraš podatke tako, da vržeš ven vse, kar je starejše od leta 2020. Dodaj to vrstico takoj za tem, ko stolpec spremeniš v datetime:
+CENE_SP_500_STOLPCI['Datum'] = pd.to_datetime(CENE_SP_500_STOLPCI['Datum'])
+
+# REŠITEV: Obdrži samo datume, ki so dejansko po letu 2020
+CENE_SP_500_STOLPCI = CENE_SP_500_STOLPCI[CENE_SP_500_STOLPCI['Datum'] > '2020-01-01']
+
+
+To bo odstranilo "parazitske" 1970 datume in graf bo spet skočil nazaj na tisto lepo območje med 2025 in 2026.
+
+User prompt: napisal sem naslednjo kodo za izris razmerja med tveganjem in donosom delnic. Ali mi lahko pomagaš izrisati graf tako, da bo najboljših n (najboljših po razmerju med donosom in tveganjem (levi zgornji kot grafa)) podjetij označenih in poimenovanih (tako da n lahko spreminjam)
+Response:
+
+User prompt: koda:donosi = CENE_500_DELNIC.pct_change().mean() * 252 # letna donosnost (v zadnjem letu je bilo 252 dni, ko je bila borza odprta) tveganje = CENE_500_DELNIC.pct_change().std() * (252**0.5) # letna volatilnost plt.scatter(tveganje, donosi, alpha=0.5) plt.xlabel('Tveganje (Volatilnost)') plt.ylabel('Povprečen letni donos') plt.title('Risk vs. Reward (Vsaka pika je ena delnica)') plt.show()
+Response: Odlična ideja! To, kar iščeš (levi zgornji kot grafa – visok donos ob nizkem tveganju), je v financah znano kot iskanje najboljšega razmerja med donosom in tveganjem (poenostavljen Sharpe-ov koeficient).
+Da bi to avtomatiziral, bova tvoje podatke združila v en Pandas DataFrame, izračunala to razmerje (Donos / Tveganje), jih razvrstila in nato z zanko dodala oznake za top n podjetij.
+Tukaj je preprosta in učinkovita koda, kjer lahko na vrhu poljubno spreminjaš številko n:
+Dopolnjena koda z avtomatskim označevanjem
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# --- 1. Nastavi število podjetij, ki jih želiš označiti ---
+n = 5  # To številko lahko poljubno spremeniš (npr. 3, 10, 15...)
+
+# --- 2. Izračun donosov in tveganja (tvoja koda) ---
+donosi = CENE_500_DELNIC.pct_change().mean() * 252
+tveganje = CENE_500_DELNIC.pct_change().std() * (252**0.5)
+
+# --- 3. Združevanje in iskanje najboljših ---
+# Podatke damo v skupno tabelo, kjer so indeksi imena podjetij (npr. AAPL, MSFT...)
+df_analiza = pd.DataFrame({
+    'Donos': donosi,
+    'Tveganje': tveganje
+})
+
+# Izračunamo razmerje: višje kot je, bolj smo v levem zgornjem kotu
+df_analiza['Razmerje'] = df_analiza['Donos'] / df_analiza['Tveganje']
+
+# Izberemo top N podjetij z najvišjim razmerjem
+najboljša_podjetja = df_analiza.sort_values(by='Razmerje', ascending=False).head(n)
+
+# --- 4. IZRIS GRAFA ---
+plt.figure(figsize=(11, 6))
+
+# Narišemo vse delnice v sivi barvi, da graf ni prenatrpan
+plt.scatter(df_analiza['Tveganje'], df_analiza['Donos'], alpha=0.4, color='gray', label='Ostale delnice')
+
+# Posebej narišemo top N delnic v rdeči barvi, da izstopajo
+plt.scatter(najboljša_podjetja['Tveganje'], najboljša_podjetja['Donos'], color='red', s=60, label=f'Top {n} delnic')
+
+# Z zanko se sprehodimo skozi najboljša podjetja in jim dodamo besedilo (ime)
+for ime_podjetja, vrstica in najboljša_podjetja.iterrows():
+    plt.annotate(
+        ime_podjetja, 
+        (vrstica['Tveganje'], vrstica['Donos']),
+        textcoords="offset points", 
+        xytext=(5, 5),      # Zamik besedila (5 pik desno, 5 pik gor od pike)
+        ha='left',          # Poravnava besedila
+        color='black', 
+        fontweight='bold',
+        fontsize=9
+    )
+
+# Oznake in naslovi
+plt.xlabel('Tveganje (Volatilnost)')
+plt.ylabel('Povprečen letni donos')
+plt.title('Risk vs. Reward (Izpostavljenih top N podjetij)')
+plt.legend()
+plt.grid(True, alpha=0.3)
+
+plt.show()
+
+
+Kako to deluje?
+Matematika kota: Če delnico z donosom 20 % in tveganjem 10 % (razmerje = 2.0) primerjamo z delnico z donosom 20 % in tveganjem 40 % (razmerje = 0.5), bo prva imela veliko višje razmerje in jo bo koda avtomatsko uvrstila med "top n".
+df_analiza.iterrows(): Ta zanka pogleda tabelo zmagovalcev in funkciji plt.annotate pove natančne koordinatne točke (x,y) ter ime podjetja (npr. "AAPL"), ki ga mora izpisati tik ob rdeči piki.
+Siva vs. Rdeča: Vse ostale delnice namenoma obarvamo v nevtralno sivo z visoko prosojnostjo (alpha=0.4), da zmagovalci v rdeči barvi takoj skočijo v oči.
+

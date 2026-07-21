@@ -2,6 +2,7 @@ import requests
 import re
 import csv
 
+
 def izlusci_sp_500():
     HEADERS = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
@@ -29,7 +30,9 @@ def izlusci_sp_500():
     seznam_cen = []
 
     odgovor = session.get(
-        f"https://ca.finance.yahoo.com/quote/%5EGSPC/history/", timeout=10, headers=HEADERS
+        f"https://ca.finance.yahoo.com/quote/%5EGSPC/history/",
+        timeout=10,
+        headers=HEADERS,
     )
     if odgovor.status_code == 200:
         vsebina = odgovor.text
