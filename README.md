@@ -1,8 +1,8 @@
 # Analiza delnic
 
 V tej nalogi sem analiziral 500 največjih delnic na borzi in indeks S&P 500.
-
 <br>
+
 ### Pridobivanje podatkov (Yahoo Finance)
 
 1. **Tickerji:** Pridobil sem seznam 500 največjih delnic na trgu.
@@ -12,8 +12,8 @@ V tej nalogi sem analiziral 500 največjih delnic na borzi in indeks S&P 500.
 3. **Finančni kazalniki:** Za vsako podjetje sem pridobil tržno kapitalizacijo (*Market Cap*), **P/E razmerje** in **beta marker**.
 
 4. **Indeks S&P 500:** Pridobil sem dnevne prilagojene cene ob zaprtju tudi za indeks S&P 500 za enako časovno obdobje.
-
 <br>
+
 ### Analiza podatkov
 
 - **Fourierova transformacija (FFT):** Izvedel sem analizo frekvenc in poiskal najmočnejše signale v gibanju cen indeksa S&P 500.
@@ -29,8 +29,8 @@ V tej nalogi sem analiziral 500 največjih delnic na borzi in indeks S&P 500.
 - **Vrednotenje (P/E):** Analiziral sem delnice z najvišjimi in najnižjimi P/E razmerji ter razložil razloge za odstopanja.
 
 - **Tveganje vs. Donos:** Na podlagi razmerja med tveganjem in donosom sem identificiral najbolj optimalne delnice za vlagatelje.
-
 <br>
+
 ### Kako zagnati projekt?
 
 - Potreboval boš naložen python verzije 3.0 ali več.
