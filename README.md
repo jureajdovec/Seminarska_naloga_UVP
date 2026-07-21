@@ -2,6 +2,7 @@
 
 V tej nalogi sem analiziral 500 največjih delnic na borzi in indeks S&P 500.
 
+<br>
 
 ### Pridobivanje podatkov (Yahoo Finance)
 
@@ -13,6 +14,7 @@ V tej nalogi sem analiziral 500 največjih delnic na borzi in indeks S&P 500.
 
 4. **Indeks S&P 500:** Pridobil sem dnevne prilagojene cene ob zaprtju tudi za indeks S&P 500 za enako časovno obdobje.
 
+<br>
 
 ### Analiza podatkov
 
@@ -30,6 +32,7 @@ V tej nalogi sem analiziral 500 največjih delnic na borzi in indeks S&P 500.
 
 - **Tveganje vs. Donos:** Na podlagi razmerja med tveganjem in donosom sem identificiral najbolj optimalne delnice za vlagatelje.
 
+<br>
 
 ### Kako zagnati projekt?
 
